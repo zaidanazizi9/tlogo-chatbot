@@ -1,0 +1,9 @@
+/* Remove default App.css styles that might conflict */
+.App {
+  text-align: left;
+}
+
+/* Ensure full height */
+#root {
+  height: 100vh;
+}
