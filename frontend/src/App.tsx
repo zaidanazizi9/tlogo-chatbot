@@ -15,7 +15,7 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case "services":
-        return <ServicesPage />
+        return <ServicesPage/>
       case "dashboard":
         return (
           <div className="space-y-6">
