@@ -15,7 +15,7 @@ app.use(express.static("public")); // untuk menyajikan file statis dari folder p
 const serviceAccount = require('./backend/chatbot-4d0fe-firebase-adminsdk-fbsvc-93fb12db18.json');
 
 const VERIFY_TOKEN = "desa_tlogo";
-const ACCESS_TOKEN = "EAAI0wxW3W2IBPBfvAysJTCqXIgKjPriwhDZAXE8wh0c9qcLBLyZCAylcENj2ElY80C4Si2PUZC0ZBsWhZBi3L34JaB8SyY14OrZCHfDeInE8L2H20MrJztZALO4YRfK7o24RkzgtlFRH3SksQUCBvxInhsbZBnHDpQO8Ieu8ZC26UoLktnvyPqScMmXbhvMGzuaYfSCpVhBrQZCZAu5gIVuQGFeoJGwmAZBkxgkpESwoaLyOOwZDZD";
+const ACCESS_TOKEN = "EAAI0wxW3W2IBPG5f0GC4MArZBsjgeqjl8J0jvdGiLXqxwjstNmGKGCcBUEwwGB9ALVHVdbPTZBO3ftinDqF5ZC9nGMEKL6mFZC6FL5IbqbRqhVhZCHhxKS94iZA2sqZA63SV7ZBHxwm0D1RgZBN6vVoPGm3YLUb8WmBUmd4F2coemKqjz3cgzEIHOWwpNwpLZBCPEvpkMEtGt8VYyGSIzLB8Jpew00ZCX2PZC9AYcIwGZAQ4qTgZDZD";
 const PHONE_NUMBER_ID = "693707970499139";
 const PENDING_FILE = "./pending_verifikasi.json";
 
@@ -57,6 +57,11 @@ app.get("/webhook", (req, res) => {
   res.sendStatus(403);
 });
 
+function isUserConfused(msg) {
+  const keywords = ["bingung", "nggak ngerti", "tidak tahu", "gimana", "error", "tidak bisa", "apa itu"];
+  return keywords.some(k => msg.includes(k));
+}
+
 // Handle pesan dari WhatsApp
 app.post("/webhook", async (req, res) => {
   const body = req.body;
@@ -73,7 +78,14 @@ app.post("/webhook", async (req, res) => {
         userMessage = message.interactive.button_reply.id.toLowerCase();
       }
 
+      // Cek jika user kebingungan
+      if (isUserConfused(userMessage)) {
+          await sendAdminContactButton(from, "Sepertinya Anda mengalami kesulitan.");
+          return res.sendStatus(200);
+        }
+
       console.log("User message:", userMessage); //buat debugging
+      console.log("✅ Tombol ditekan:", userMessage);
 
       if (!sessions[from]) sessions[from] = { step: "awal" };
       const session = sessions[from];
@@ -191,7 +203,11 @@ app.post("/webhook", async (req, res) => {
         }
       }
 
-      if (reply) await sendTextMessage(from, reply);
+      if (reply) {
+        await sendTextMessage(from, reply);
+      } else {
+        await sendAdminContactButton(from, "Maaf, saya belum memahami maksud Anda.");
+      }
       return res.sendStatus(200);
     }
   }
@@ -314,6 +330,18 @@ async function sendTextMessage(to, body) {
     })
   });
 }
+
+// Helper untuk kirim tombol kontak admin
+// Jika user mengalami kesulitan, kirimkan tombol untuk menghubungi admin
+async function sendAdminContactButton(to, customText = null) {
+  const adminPhone = "6281287789220";
+  const adminLink = `https://wa.me/${adminPhone}?text=Halo%20Admin,%20saya%20butuh%20bantuan%20lebih%20lanjut.`;
+  const message = customText 
+    ? `${customText}\n\n📞 Hubungi admin di sini:\n${adminLink}`
+    : `📞 Anda dapat menghubungi admin langsung melalui tautan berikut:\n${adminLink}`;
+
+  return await sendTextMessage(to, message);
+} 
 
 function capitalize(str) {
   return str.split(" ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
