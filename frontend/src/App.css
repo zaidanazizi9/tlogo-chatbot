@@ -1,9 +1,17 @@
 /* Remove default App.css styles that might conflict */
 .App {
-  text-align: left;
+    text-align: left;
 }
 
 /* Ensure full height */
 #root {
-  height: 100vh;
+    height: 100vh;
+}
+
+/* Di file CSS (misal App.css atau global.css) */
+.select-no-arrow {
+    appearance: none; /* untuk modern browser */
+    -webkit-appearance: none; /* Safari/Chrome */
+    -moz-appearance: none; /* Firefox */
+    background-image: none; /* hilangkan background panah default */
 }

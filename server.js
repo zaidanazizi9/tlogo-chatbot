@@ -15,7 +15,7 @@ app.use(express.static("public")); // untuk menyajikan file statis dari folder p
 const serviceAccount = require('./backend/chatbot-4d0fe-firebase-adminsdk-fbsvc-93fb12db18.json');
 
 const VERIFY_TOKEN = "desa_tlogo";
-const ACCESS_TOKEN = "EAAI0wxW3W2IBPDBeF8hcFtRBzZAu7dh9nvaAqeq2iYDRSqKALsDzJwrXGo7yDnwZAA8nZATakhEpwazMSHmWoWyeEkOaLYHDPD9SxR2tZASK8YdXGqioyEIcORoZAQii2ZBfg3fppxzHykG7KPvhXwiDDcTwxayskFFdqOmEvdyMSI2qAZBMfLlHSGisx2Kn6nPr01XnIdGZBpCSvqLtuk29tVGZAzpFvBP9Uj3eC3qXItQZDZD";
+const ACCESS_TOKEN = "EAAI0wxW3W2IBPG5f0GC4MArZBsjgeqjl8J0jvdGiLXqxwjstNmGKGCcBUEwwGB9ALVHVdbPTZBO3ftinDqF5ZC9nGMEKL6mFZC6FL5IbqbRqhVhZCHhxKS94iZA2sqZA63SV7ZBHxwm0D1RgZBN6vVoPGm3YLUb8WmBUmd4F2coemKqjz3cgzEIHOWwpNwpLZBCPEvpkMEtGt8VYyGSIzLB8Jpew00ZCX2PZC9AYcIwGZAQ4qTgZDZD";
 const PHONE_NUMBER_ID = "693707970499139";
 const PENDING_FILE = "./pending_verifikasi.json";
 
@@ -57,6 +57,11 @@ app.get("/webhook", (req, res) => {
   res.sendStatus(403);
 });
 
+function isUserConfused(msg) {
+  const keywords = ["bingung", "nggak ngerti", "tidak tahu", "gimana", "error", "tidak bisa", "apa itu"];
+  return keywords.some(k => msg.includes(k));
+}
+
 // Handle pesan dari WhatsApp
 app.post("/webhook", async (req, res) => {
   const body = req.body;
@@ -73,12 +78,21 @@ app.post("/webhook", async (req, res) => {
         userMessage = message.interactive.button_reply.id.toLowerCase();
       }
 
+      // Cek jika user kebingungan
+      if (isUserConfused(userMessage)) {
+          await sendAdminContactButton(from, "Sepertinya Anda mengalami kesulitan.");
+          return res.sendStatus(200);
+        }
+
+      console.log("User message:", userMessage); //buat debugging
+      console.log("✅ Tombol ditekan:", userMessage);
+
       if (!sessions[from]) sessions[from] = { step: "awal" };
       const session = sessions[from];
       let reply = null;
 
-      // === FITUR BARU: Menampilkan daftar layanan dari Firestore ===
-      if (userMessage.includes("layanan")) {
+      // === FITUR BARU: Menampilkan daftar kategori layanan dari Firestore ===
+      if (userMessage === "layanan") {
         try {
           const snapshot = await layananRef.get();
           const layananAktif = snapshot.docs
@@ -86,13 +100,15 @@ app.post("/webhook", async (req, res) => {
             .filter(service => service.status === "active");
 
           if (layananAktif.length === 0) {
-            reply = "Saat ini belum ada layanan yang tersedia.";
-          } else {
-            reply = "*Daftar Layanan:*\n" + layananAktif.map((s, i) =>
-              `${i + 1}. ${s.name} - ${s.description}`).join("\n");
+            await sendTextMessage(from, "Saat ini belum ada layanan yang tersedia.");
+            return res.sendStatus(200);
           }
 
-          await sendTextMessage(from, reply);
+          // Ambil kategori unik
+          const kategoriUnik = [...new Set(layananAktif.map(l => l.category))];
+
+          // Kirim tombol interaktif (maks 3)
+          await sendInteractiveKategoriButton(from, kategoriUnik);
           return res.sendStatus(200);
         } catch (err) {
           console.error("Gagal ambil layanan:", err);
@@ -101,28 +117,97 @@ app.post("/webhook", async (req, res) => {
         }
       }
 
-      if (session.step === "menunggu_pilihan" && userMessage === "1") {
-        reply = `Anda memilih Paket 100 GB seharga Rp20.000.\n\nUntuk melanjutkan pembelian, silakan transfer ke:\n💳 BCA 1234567890 a.n. PT Contoh Data\n\nSetelah transfer, ketik *konfirmasi*.`;
-        session.step = "menunggu_konfirmasi";
-      } else if (session.step === "menunggu_pilihan" && userMessage === "2") {
-        reply = `Anda memilih Paket Unlimited 30 Hari seharga Rp100.000.000.\n\nUntuk melanjutkan pembelian, silakan transfer ke:\n💳 BCA 1234567890 a.n. PT Contoh Data\n\nSetelah transfer, ketik *konfirmasi*.`;
-        session.step = "menunggu_konfirmasi";
-      } else if (userMessage.includes("konfirmasi") && session.step === "menunggu_konfirmasi") {
-        const pending = JSON.parse(fs.readFileSync(PENDING_FILE));
-        pending.push({ from, timestamp: Date.now() });
-        fs.writeFileSync(PENDING_FILE, JSON.stringify(pending, null, 2));
+      // === FITUR BARU: Menampilkan layanan berdasarkan kategori ===
+      // if (userMessage.startsWith("kategori_")) {
+      //   const selectedKategori = userMessage.replace("kategori_", "").replace(/_/g, " ");
+      //   console.log("👉 Kategori dipilih:", selectedKategori);
 
-        reply = `Terima kasih! Permintaan Anda telah dicatat. Mohon tunggu admin memverifikasi pembayaran.`;
-        session.step = "selesai";
-      } else if (session.step === "selesai" && userMessage.includes("hai")) {
-        session.step = "menunggu_pilihan";
-        await sendInteractiveButton(from, "Silakan pilih paket kembali:");
-        return res.sendStatus(200);
-      } else {
-        reply = `Ketik *1* atau *2* untuk memilih paket, atau *konfirmasi* jika sudah transfer.`;
+      //   try {
+      //     const snapshot = await layananRef.where("status", "==", "active").get();
+      //     const layananDalamKategori = snapshot.docs.map(doc => doc.data()).filter(service => service.category.toLowerCase() === selectedKategori.toLowerCase());
+      //     if (layananDalamKategori.length === 0) {
+      //       await sendTextMessage(from, `Tidak ditemukan layanan dalam kategori *${capitalize(selectedKategori)}*.`);
+      //     } else {
+      //       await sendInteractiveLayananButton(from, layananDalamKategori);
+      //     }
+      //     return res.sendStatus(200);
+      //   } catch (err) {
+      //     console.error("Gagal ambil layanan:", err);
+      //     await sendTextMessage(from, "Terjadi kesalahan saat mengambil data layanan.");
+      //     return res.sendStatus(200);
+      //   }
+      // }
+
+      //Codingan percobaan
+      if (userMessage.startsWith("kategori_")) {
+        const selectedKategori = userMessage.replace("kategori_", "").replace(/_/g, " ");
+        console.log("👉 Kategori dipilih:", selectedKategori);
+
+        try {
+          const snapshot = await layananRef.where("status", "==", "active").get();
+
+          console.log("📦 Semua layanan aktif:");
+          snapshot.docs.forEach(doc => {
+            const data = doc.data();
+            console.log(`- Nama: ${data.name}, Kategori: ${data.category}`);
+          });
+
+          const layananDalamKategori = snapshot.docs
+            .map(doc => doc.data())
+            .filter(service => service.category.toLowerCase() === selectedKategori.toLowerCase());
+
+          console.log("✅ Ditemukan layanan:", layananDalamKategori.length);
+
+          if (layananDalamKategori.length === 0) {
+            await sendTextMessage(from, `Tidak ditemukan layanan dalam kategori *${capitalize(selectedKategori)}*.`);
+          } else {
+            await sendInteractiveLayananButton(from, layananDalamKategori);
+          }
+
+          return res.sendStatus(200);
+        } catch (err) {
+          console.error("Gagal ambil layanan:", err);
+          await sendTextMessage(from, "Terjadi kesalahan saat mengambil data layanan.");
+          return res.sendStatus(200);
+        }
       }
 
-      if (reply) await sendTextMessage(from, reply);
+      // === FITUR BARU: Menampilkan detail layanan ===
+      if (userMessage.startsWith("layanan_")) {
+        const namaLayananSlug = userMessage.replace("layanan_", "").replace(/_/g, " ");
+
+        try {
+          const snapshot = await layananRef
+            .where("status", "==", "active")
+            .get();
+
+          const layananAktif = snapshot.docs.map(doc => doc.data());
+
+          const layanan = layananAktif.find(l =>
+            l.name.toLowerCase() === namaLayananSlug.toLowerCase()
+          );
+
+          if (!layanan) {
+            await sendTextMessage(from, `❌ Layanan *${capitalize(namaLayananSlug)}* tidak ditemukan.`);
+          } else {
+            const detailText = `📄 *${layanan.name}*\n\n📘 *Deskripsi:* ${layanan.description}\n📑 *Syarat & Ketentuan:* ${layanan.termsAndConditions}\n🧭 *Prosedur:* ${layanan.procedure}`;
+
+            await sendTextMessage(from, detailText);
+          }
+
+          return res.sendStatus(200);
+        } catch (err) {
+          console.error("Gagal ambil detail layanan:", err);
+          await sendTextMessage(from, "Terjadi kesalahan saat mengambil detail layanan.");
+          return res.sendStatus(200);
+        }
+      }
+
+      if (reply) {
+        await sendTextMessage(from, reply);
+      } else {
+        await sendAdminContactButton(from, "Maaf, saya belum memahami maksud Anda.");
+      }
       return res.sendStatus(200);
     }
   }
@@ -130,7 +215,17 @@ app.post("/webhook", async (req, res) => {
 });
 
 // Helper untuk kirim tombol interaktif
-async function sendInteractiveButton(to, messageText) {
+async function sendInteractiveKategoriButton(to, kategoriList) {
+  const buttons = kategoriList.slice(0, 3).map((kategori) => ({
+    type: "reply",
+    reply: {
+      id: `kategori_${kategori.toLowerCase().replace(/\s+/g, "_")}`,
+      title: kategori
+    }
+  }));
+
+  const openingText = `📌 *Layanan Desa Tlogo*\n\nHalo! Berikut beberapa *kategori layanan* yang tersedia di Desa Tlogo. Silakan pilih salah satu kategori untuk melihat daftar layanan yang tersedia di dalamnya:\n`;
+
   return await fetch(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
     method: "POST",
     headers: {
@@ -143,17 +238,82 @@ async function sendInteractiveButton(to, messageText) {
       type: "interactive",
       interactive: {
         type: "button",
-        body: { text: messageText },
+        body: {
+          text: openingText
+        },
         action: {
-          buttons: [
-            { type: "reply", reply: { id: "1", title: "Paket 100 GB" } },
-            { type: "reply", reply: { id: "2", title: "Paket Unlimited" } }
-          ]
+          buttons
         }
       }
     })
   });
 }
+
+// Helper untuk kirim tombol interaktif layanan
+// async function sendInteractiveLayananButton(to, layananList) {
+//   const buttons = layananList.slice(0, 3).map((layanan) => ({
+//     type: "reply",
+//     reply: {
+//       id: `layanan_${layanan.name.toLowerCase().replace(/\s+/g, "_")}`,
+//       title: layanan.name
+//     }
+//   }));
+
+//   const text = `📋 Berikut adalah daftar layanan yang tersedia dalam kategori ini. Silakan pilih salah satu:`;
+
+//   return await fetch(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
+//     method: "POST",
+//     headers: {
+//       "Authorization": `Bearer ${ACCESS_TOKEN}`,
+//       "Content-Type": "application/json"
+//     },
+//     body: JSON.stringify({
+//       messaging_product: "whatsapp",
+//       to,
+//       type: "interactive",
+//       interactive: {
+//         type: "button",
+//         body: { text },
+//         action: { buttons }
+//       }
+//     })
+//   });
+// }
+
+//Codingan percobaan
+async function sendInteractiveLayananButton(to, layananList) {
+  const buttons = layananList.slice(0, 3).map((layanan) => ({
+    type: "reply",
+    reply: {
+      id: `layanan_${layanan.name.toLowerCase().replace(/\s+/g, "_")}`,
+      title: layanan.name.length > 20 ? layanan.name.slice(0, 17) + "..." : layanan.name
+    }
+  }));
+
+  console.log("📨 Kirim tombol layanan ke:", to);
+  console.log("📋 Tombol:", buttons);
+
+  const text = `📋 Berikut adalah daftar layanan yang tersedia dalam kategori ini. Silakan pilih salah satu:`;
+
+  return await fetch(`https://graph.facebook.com/v19.0/${PHONE_NUMBER_ID}/messages`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${ACCESS_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to,
+      type: "interactive",
+      interactive: {
+        type: "button",
+        body: { text },
+        action: { buttons }
+      }
+    })
+  });
+}
+
 
 // Helper untuk kirim teks biasa
 async function sendTextMessage(to, body) {
@@ -169,6 +329,22 @@ async function sendTextMessage(to, body) {
       text: { body }
     })
   });
+}
+
+// Helper untuk kirim tombol kontak admin
+// Jika user mengalami kesulitan, kirimkan tombol untuk menghubungi admin
+async function sendAdminContactButton(to, customText = null) {
+  const adminPhone = "6281287789220";
+  const adminLink = `https://wa.me/${adminPhone}?text=Halo%20Admin,%20saya%20butuh%20bantuan%20lebih%20lanjut.`;
+  const message = customText 
+    ? `${customText}\n\n📞 Hubungi admin di sini:\n${adminLink}`
+    : `📞 Anda dapat menghubungi admin langsung melalui tautan berikut:\n${adminLink}`;
+
+  return await sendTextMessage(to, message);
+} 
+
+function capitalize(str) {
+  return str.split(" ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
 }
 
 // Endpoint admin: list pending

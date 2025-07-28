@@ -76,11 +76,11 @@ export default function ServiceList({
                             <th className="px-8  py-3 text-center text-sm font-medium uppercase tracking-wider">
                                 Kategori
                             </th>
-                            <th className="px-2 py-3 text-center text-sm font-medium uppercase tracking-wider">
+                            <th className="text-center text-sm font-medium uppercase tracking-wider">
                                 Status
                             </th>
                             <th className="pr-10 pl-6 py-3 text-center text-sm font-medium uppercase tracking-wider">
-                                Aksi
+                                Tindakan
                             </th>
                         </tr>
                     </thead>
@@ -133,29 +133,46 @@ export default function ServiceList({
                                             >
                                                 {service.status === "active"
                                                     ? "Aktif"
-                                                    : "Tidak Aktif"}
+                                                    : "Nonaktif"}
                                             </span>
                                         </div>
                                     </td>
                                     <td className="pr-10 pl-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="w-5/6 m-auto flex justify-center space-x-2">
-                                            <button
+                                            {/* <button
                                                 onClick={() =>
                                                     onEditService(service)
                                                 }
                                                 className="text-yellow-600 hover:text-yellow-900"
                                             >
                                                 <Edit className="w-4 h-4" />
+                                            </button> */}
+                                            <button
+                                                onClick={() =>
+                                                    onEditService(service)
+                                                }
+                                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
+                                            >
+                                                Edit
                                             </button>
 
                                             <button
                                                 onClick={() =>
                                                     onDeleteService(service)
                                                 }
+                                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                                            >
+                                                Hapus
+                                            </button>
+
+                                            {/* <button
+                                                onClick={() =>
+                                                    onDeleteService(service)
+                                                }
                                                 className="text-red-600 hover:text-red-900"
                                             >
                                                 <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            </button> */}
                                         </div>
                                     </td>
                                 </tr>

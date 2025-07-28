@@ -26,7 +26,7 @@ export default function ServiceList({
                                 Nama Layanan
                             </th>
                             <th className="pr-10 pl-6 py-3 text-center text-sm font-medium uppercase tracking-wider">
-                                Aksi
+                                Tindakan
                             </th>
                         </tr>
                     </thead>
@@ -48,11 +48,17 @@ export default function ServiceList({
                                     </td>
                                     <td className="pr-10 pl-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="w-5/6 m-auto flex justify-center space-x-2">
-                                            <button
+                                            {/* <button
                                                 onClick={() => onDeleteCat(cat)}
                                                 className="text-red-600 hover:text-red-900"
                                             >
                                                 <Trash2 className="w-4 h-4" />
+                                            </button> */}
+                                            <button
+                                                onClick={() => onDeleteCat(cat)}
+                                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                                            >
+                                                Hapus
                                             </button>
                                         </div>
                                     </td>
