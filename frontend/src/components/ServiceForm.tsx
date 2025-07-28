@@ -3,7 +3,15 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import {
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    where,
+    updateDoc,
+    doc,
+} from "firebase/firestore";
 import { db } from "../config/firestore";
 import toast from "react-hot-toast";
 
@@ -20,11 +28,15 @@ interface Service {
 interface ServiceFormProps {
     onAddService: (service: Omit<Service, "id">) => void;
     onClose: () => void;
+    initialData?: Service; // opsional, karena hanya digunakan saat edit
+    isEditing?: boolean;
 }
 
 export default function ServiceForm({
     onAddService,
     onClose,
+    initialData,
+    isEditing = false,
 }: ServiceFormProps) {
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [categories, setCategories] = useState<string[]>([]);
@@ -39,6 +51,21 @@ export default function ServiceForm({
         status: "active" as "active" | "inactive",
     });
 
+    // Tambahkan ini agar `initialData` terisi saat form dibuka untuk edit
+    useEffect(() => {
+        if (initialData) {
+            setFormData({
+                name: initialData.name,
+                description: initialData.description,
+                termsAndConditions: initialData.termsAndConditions,
+                procedure: initialData.procedure,
+                category: initialData.category,
+                status: initialData.status,
+            });
+        }
+    }, [initialData]);
+
+    //fetch kategori untuk menampilkan list kategori yg tersedia ketika buat layanan
     useEffect(() => {
         const fetchCategories = async () => {
             const querySnapshot = await getDocs(collection(db, "category"));
@@ -51,71 +78,39 @@ export default function ServiceForm({
         fetchCategories();
     }, []);
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
+    //set default kategori
+    useEffect(() => {
+        if (!formData.category && categories.length > 0) {
+            setFormData((prev) => ({
+                ...prev,
+                category: categories[0],
+            }));
+        }
+    }, [categories]);
 
-    //     // Validasi form
-    //     if (!formData.name || !formData.description || !formData.category) {
-    //         toast.error("Mohon lengkapi semua field!");
-    //         return;
-    //     }
-    //     try {
-    //         const q = query(
-    //             collection(db, "services"),
-    //             where("name", "==", formData.name)
-    //         );
-    //         const snapshot = await getDocs(q);
-
-    //         if (!snapshot.empty) {
-    //             toast.error("Layanan tersebut sudah ada!");
-    //             return;
-    //         }
-
-    //         const docRef = await addDoc(collection(db, "services"), {
-    //             name: formData.name,
-    //             description: formData.description,
-    //             category: formData.category,
-    //             termsAndConditions: formData.termsAndConditions,
-    //             procedure: formData.procedure,
-    //             status: formData.status,
-    //         });
-
-    //         onAddService({
-    //             id: docRef.id,
-    //             name: formData.name,
-    //             description: formData.description,
-    //             category: formData.category,
-    //             termsAndConditions: formData.termsAndConditions,
-    //             procedure: formData.procedure,
-    //             status: formData.status,
-    //         });
-
-    //         setFormData({
-    //             name: "",
-    //             description: "",
-    //             category: "",
-    //             termsAndConditions: "",
-    //             procedure: "",
-    //             status: "active",
-    //         });
-
-    //         toast.success("Layanan berhasil ditambahkan!");
-    //         onClose();
-    //     } catch (error) {
-    //         console.error("Gagal menambahkan dokumen:", error);
-    //         alert("Gagal menambahkan data ke Firebase.");
-    //     }
-    // };
-
+    //fungsi untuk mengisi layanan
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.description || !formData.category) {
+        if (
+            !formData.name ||
+            !formData.description ||
+            !formData.category ||
+            !formData.termsAndConditions ||
+            !formData.procedure
+        ) {
             toast.error("Mohon lengkapi semua field!");
             return;
         }
 
         try {
+            if (isEditing && initialData) {
+                const docRef = doc(db, "services", initialData.id);
+                await updateDoc(docRef, formData);
+                toast.success("Layanan berhasil diperbarui!");
+                onClose();
+                return;
+            }
             const q = query(
                 collection(db, "services"),
                 where("name", "==", formData.name)
@@ -128,6 +123,12 @@ export default function ServiceForm({
             }
 
             onAddService(formData);
+            // const docRef = await addDoc(collection(db, "services"), formData);
+
+            // onAddService({
+            //     ...formData,
+            //     id: docRef.id,
+            // });
 
             setFormData({
                 name: "",
@@ -145,6 +146,7 @@ export default function ServiceForm({
         }
     };
 
+    //fungsi untuk mengubah kategori
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = e.target.value;
 
@@ -155,6 +157,7 @@ export default function ServiceForm({
         }
     };
 
+    //fungsi untuk mengubah form data
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -166,14 +169,10 @@ export default function ServiceForm({
         });
     };
 
+    //fungsi untuk menambahkan kategori baru dari saat mengisi layanan
     const addNewCategory = async (name: string) => {
         const originalName = name.trim();
         const normalizedName = originalName.toLowerCase();
-
-        // if (!originalName) {
-        //   toast.error("Nama kategori tidak boleh kosong!")
-        //   return
-        // }
 
         try {
             const categoriesRef = collection(db, "category");
@@ -376,3 +375,59 @@ export default function ServiceForm({
         </div>
     );
 }
+
+// const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     // Validasi form
+//     if (!formData.name || !formData.description || !formData.category) {
+//         toast.error("Mohon lengkapi semua field!");
+//         return;
+//     }
+//     try {
+//         const q = query(
+//             collection(db, "services"),
+//             where("name", "==", formData.name)
+//         );
+//         const snapshot = await getDocs(q);
+
+//         if (!snapshot.empty) {
+//             toast.error("Layanan tersebut sudah ada!");
+//             return;
+//         }
+
+//         const docRef = await addDoc(collection(db, "services"), {
+//             name: formData.name,
+//             description: formData.description,
+//             category: formData.category,
+//             termsAndConditions: formData.termsAndConditions,
+//             procedure: formData.procedure,
+//             status: formData.status,
+//         });
+
+//         onAddService({
+//             id: docRef.id,
+//             name: formData.name,
+//             description: formData.description,
+//             category: formData.category,
+//             termsAndConditions: formData.termsAndConditions,
+//             procedure: formData.procedure,
+//             status: formData.status,
+//         });
+
+//         setFormData({
+//             name: "",
+//             description: "",
+//             category: "",
+//             termsAndConditions: "",
+//             procedure: "",
+//             status: "active",
+//         });
+
+//         toast.success("Layanan berhasil ditambahkan!");
+//         onClose();
+//     } catch (error) {
+//         console.error("Gagal menambahkan dokumen:", error);
+//         alert("Gagal menambahkan data ke Firebase.");
+//     }
+// };
