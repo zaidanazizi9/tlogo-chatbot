@@ -22,6 +22,7 @@ interface Service {
     category: string;
     termsAndConditions: string;
     procedure: string;
+    time: string;
     status: "active" | "inactive";
 }
 
@@ -48,6 +49,7 @@ export default function ServiceForm({
         termsAndConditions: "",
         procedure: "",
         category: "",
+        time: "",
         status: "active" as "active" | "inactive",
     });
 
@@ -59,6 +61,7 @@ export default function ServiceForm({
                 description: initialData.description,
                 termsAndConditions: initialData.termsAndConditions,
                 procedure: initialData.procedure,
+                time: initialData.time, // or set to a value if available, e.g. initialData.time ?? ""
                 category: initialData.category,
                 status: initialData.status,
             });
@@ -98,6 +101,7 @@ export default function ServiceForm({
             !formData.category ||
             !formData.termsAndConditions ||
             !formData.procedure
+            // || !formData.time
         ) {
             toast.error("Mohon lengkapi semua field!");
             return;
@@ -136,6 +140,7 @@ export default function ServiceForm({
                 category: "",
                 termsAndConditions: "",
                 procedure: "",
+                time: "",
                 status: "active",
             });
 
@@ -237,7 +242,6 @@ export default function ServiceForm({
                                 placeholder="Masukkan nama layanan"
                             />
                         </div>
-
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Deskripsi
@@ -266,11 +270,7 @@ export default function ServiceForm({
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                {/* <<<<<<< HEAD
-                                Prosedure
-======= */}
                                 Prosedur
-                                {/* >>>>>>> origin/main */}
                             </label>
                             <textarea
                                 name="procedure"
@@ -279,6 +279,19 @@ export default function ServiceForm({
                                 rows={3}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Masukkan prosedur layanan"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Jadwal dan tempat layanan tersedia
+                            </label>
+                            <input
+                                type="text"
+                                name="time"
+                                value={formData.time}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Masukkan jadwal layanan"
                             />
                         </div>
                         <div>

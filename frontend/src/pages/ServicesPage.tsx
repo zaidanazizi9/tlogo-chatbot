@@ -30,6 +30,7 @@ interface Service {
     category: string;
     termsAndConditions: string;
     procedure: string;
+    time: string;
     status: "active" | "inactive";
 }
 
@@ -372,7 +373,7 @@ export default function ServicesPage() {
                                 setSelectedCategory(e.target.value)
                             }
                             onClick={() => setIsDropdownOpen((prev) => !prev)}
-                            className="select-no-arrow w-48 border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                            className="appearance-none select-no-arrow w-48 border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-400"
                         >
                             <option value="Semua">Semua Kategori</option>
                             {categories.map((cat) => (
@@ -455,7 +456,7 @@ export default function ServicesPage() {
 
             {/* Dialog Konfirmasi Hapus */}
             {serviceToDelete && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                <div className="fixed -top-10 inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg w-80 shadow-lg">
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">
                             Konfirmasi Hapus

@@ -1,6 +1,8 @@
 "use client";
 
 import { Edit, Trash2, Eye } from "lucide-react";
+import { useState } from "react";
+import DetailPopup from "./DetailPopup";
 
 interface Service {
     id: string;
@@ -9,6 +11,17 @@ interface Service {
     category: string;
     termsAndConditions: string;
     procedure: string;
+    time: string;
+    status: "active" | "inactive";
+}
+
+interface ServiceFormData {
+    name: string;
+    description: string;
+    termsAndConditions: string;
+    procedure: string;
+    category: string;
+    time: string;
     status: "active" | "inactive";
 }
 
@@ -24,6 +37,11 @@ export default function ServiceList({
     onDeleteService,
     onEditService,
 }: ServiceListProps) {
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedService, setSelectedService] = useState<Service | null>(
+        null
+    );
+
     return (
         <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">
@@ -70,7 +88,7 @@ export default function ServiceList({
                     </thead> */}
                     <thead>
                         <tr className=" text-gray-500">
-                            <th className="pl-6 pr-12 py-3 text-left text-sm font-medium uppercase tracking-wider w-3/4">
+                            <th className="p-6 py-3 text-left text-sm font-medium uppercase tracking-wider w-3/4">
                                 Nama Layanan
                             </th>
                             <th className="px-8  py-3 text-center text-sm font-medium uppercase tracking-wider">
@@ -102,12 +120,16 @@ export default function ServiceList({
                                     className="hover:bg-gray-50"
                                 >
                                     {/* <td className="px-2 py-4 whitespace-nowrap"> */}
-                                    <td className="pl-6 pr-12 py-4 break-words max-w-xs">
-                                        <div>
-                                            <div className="text-sm font-medium text-gray-900">
+                                    <td className="pl-6 pr-12 py-4 break-words max-w-xs cursor-pointer">
+                                        <div
+                                            onClick={() =>
+                                                setSelectedService(service)
+                                            }
+                                        >
+                                            <div className=" font-medium text-gray-900">
                                                 {service.name}
                                             </div>
-                                            <div className="text-sm text-gray-500">
+                                            <div className=" text-gray-500">
                                                 {service.description}
                                             </div>
                                         </div>
@@ -115,7 +137,7 @@ export default function ServiceList({
                                     {/* <td className="px-2 py-4 whitespace-nowrap"> */}
                                     <td className="px-2 py-4 break-words max-w-xs ">
                                         <div className="w-5/6 m-auto flex justify-center">
-                                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            <span className="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">
                                                 {service.category}
                                             </span>
                                         </div>
@@ -125,7 +147,7 @@ export default function ServiceList({
                                     <td className="px-2 py-4 break-words max-w-xs">
                                         <div className="w-5/6 m-auto flex justify-center">
                                             <span
-                                                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
                                                     service.status === "active"
                                                         ? "bg-green-100 text-green-800"
                                                         : "bg-red-100 text-red-800"
@@ -151,7 +173,7 @@ export default function ServiceList({
                                                 onClick={() =>
                                                     onEditService(service)
                                                 }
-                                                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
+                                                className="bg-yellow-400 hover:bg-yellow-400 text-white px-3 py-1 rounded text-sm"
                                             >
                                                 Edit
                                             </button>
@@ -181,6 +203,13 @@ export default function ServiceList({
                     </tbody>
                 </table>
             </div>
+            {selectedService && (
+                <DetailPopup
+                    isOpen={true}
+                    onClose={() => setSelectedService(null)}
+                    formData={selectedService}
+                />
+            )}
         </div>
     );
 }
