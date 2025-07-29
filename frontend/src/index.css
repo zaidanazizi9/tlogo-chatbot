@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Google Fonts untuk readability yang lebih baik */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 /* Reset default styles */
 * {
   margin: 0;
@@ -37,4 +40,15 @@ code {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Utility classes untuk kemudahan */
+.text-balance {
+  text-wrap: balance;
+}
+
+.container-safe {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
