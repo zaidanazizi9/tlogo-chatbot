@@ -20,20 +20,6 @@ interface LoginFormProps {
     onLogin?: (email: string, password: string) => void;
 }
 
-async function login(email: string, password: string) {
-    try {
-        const userCredential = await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-        const user = userCredential.user;
-        console.log("Login berhasil:", user.email);
-    } catch (error) {
-        console.error("Login gagal:", error);
-    }
-}
-
 export const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -63,7 +49,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             );
             const user = userCredential.user;
             console.log("Login berhasil:", user.email);
-            onLogin?.(email, password);
+            // onLogin?.(email, password);
+            if (onLogin) {
+                await onLogin(email, password);
+            }
         } catch (error: any) {
             console.error("Login gagal:", error);
             if (error.code === "auth/user-not-found") {

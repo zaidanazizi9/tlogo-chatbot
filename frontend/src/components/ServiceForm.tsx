@@ -107,8 +107,8 @@ export default function ServiceForm({
             !formData.category ||
             !formData.termsAndConditions ||
             !formData.notes ||
-            !formData.procedure
-            // || !formData.time
+            !formData.procedure ||
+            !formData.time
         ) {
             toast.error("Mohon lengkapi semua field!");
             return;
@@ -226,8 +226,9 @@ export default function ServiceForm({
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">
-                        Tambah Layanan Baru
+                        {isEditing ? "Edit Layanan" : "Tambah Layanan Baru"}
                     </h3>
+
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-gray-600"

@@ -324,7 +324,7 @@ export default function CategoryPage() {
                     <h2 className="text-2xl font-bold text-green-800">
                         Manajemen Kategori
                     </h2>
-                    <p className="text-gray-600">
+                    <p className="text-gray-500">
                         Kelola semua kategori yang tersedia
                     </p>
                 </div>
@@ -401,7 +401,7 @@ export default function CategoryPage() {
 
             {/* Modal Tambah */}
             {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                <div className="fixed -top-10 inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl p-6 w-80 shadow-md">
                         <h3 className="text-lg font-semibold mb-4">
                             Tambah Kategori Baru

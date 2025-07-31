@@ -98,7 +98,7 @@ export default function ServicesPage() {
                     <h2 className="text-2xl font-bold text-green-800">
                         Manajemen Layanan
                     </h2>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-gray-500">
                         Kelola semua layanan yang tersedia
                     </p>
                 </div>
