@@ -24,6 +24,7 @@ import {
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import CategoryList from "../components/CategoryList";
+import { ClipLoader } from "react-spinners";
 
 interface Category {
     // <<<<<<< HEAD
@@ -248,6 +249,7 @@ export default function CategoryPage() {
         useState<Category | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
     const [name, setName] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     // Ambil data kategori
     useEffect(() => {
@@ -259,6 +261,7 @@ export default function CategoryPage() {
                     name: doc.data().name,
                 }));
                 setCategories(categoryList);
+                setIsLoading(false);
             } catch (error) {
                 console.error("Gagal mengambil data kategori:", error);
                 toast.error("Gagal mengambil data kategori.");
@@ -316,7 +319,11 @@ export default function CategoryPage() {
         setCategoriesToDelete(cat);
     };
 
-    return (
+    return isLoading ? (
+        <div className="flex items-center -translate-y-20 justify-center h-screen">
+            <ClipLoader size={80} color="rgba(22, 163,74)" />
+        </div>
+    ) : (
         <div className="space-y-6">
             {/* Header Kategori */}
             <div className="flex justify-between items-center">
@@ -331,7 +338,7 @@ export default function CategoryPage() {
 
                 <button
                     onClick={() => setShowForm(true)}
-                    className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
                 >
                     <Plus className="w-4 h-4" />
                     <span>Tambah Kategori</span>
@@ -438,5 +445,4 @@ export default function CategoryPage() {
             )}
         </div>
     );
-    // >>>>>>> origin/main
 }

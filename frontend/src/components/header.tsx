@@ -106,23 +106,14 @@ export default function Header() {
                                 <div className="px-4 pb-2 text-sm text-gray-500 font-medium leading-snug break-words max-w-[220px]">
                                     <span className="block">
                                         {
-                                            user?.primaryEmailAddress?.emailAddress.split(
-                                                "@"
-                                            )[0]
-                                        }
-                                    </span>
-                                    <span className="block">
-                                        @
-                                        {
-                                            user?.primaryEmailAddress?.emailAddress.split(
-                                                "@"
-                                            )[1]
+                                            user?.primaryEmailAddress
+                                                ?.emailAddress
                                         }
                                     </span>
                                 </div>
 
-                                <div className="border-t border-gray-100 my-1"></div>
-                                <div className="border-t border-gray-100 my-1"></div>
+                                <div className="border-t border-gray-200 my-1"></div>
+                                <div className="border-t border-gray-200 my-1"></div>
                                 <button
                                     onClick={handleLogout}
                                     className="flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

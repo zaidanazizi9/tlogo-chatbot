@@ -161,7 +161,7 @@ const DetailPopup: React.FC<PopupProps> = ({ isOpen, onClose, formData }) => {
                             <h3 className="text-sm font-medium text-gray-700 mb-4">
                                 Syarat dan Ketentuan
                             </h3>
-                            <p className="text-gray-900 whitespace-pre-wrap leading-none">
+                            <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
                                 {formData.termsAndConditions || "Not specified"}
                             </p>
                         </div>

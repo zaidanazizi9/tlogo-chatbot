@@ -13,6 +13,7 @@ import {
     getDocs,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
+import { ClipLoader } from "react-spinners";
 
 interface Service {
     id: string;
@@ -37,6 +38,7 @@ export default function ServicesPage() {
     const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
     const [categories, setCategories] = useState<string[]>([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -46,6 +48,7 @@ export default function ServicesPage() {
                     (doc) => doc.data().name
                 );
                 setCategories(categoryList);
+                setIsLoading(false);
             } catch (error) {
                 console.error("Gagal mengambil kategori:", error);
             }
@@ -90,7 +93,11 @@ export default function ServicesPage() {
         setShowForm(true);
     };
 
-    return (
+    return isLoading ? (
+        <div className="flex items-center -translate-y-20 justify-center h-screen">
+            <ClipLoader size={80} color="rgba(22, 163,74)" />
+        </div>
+    ) : (
         <div className="space-y-8 px-6 py-6">
             {/* Header */}
             <div className="flex justify-between items-center">

@@ -18,6 +18,7 @@ import { SignIn, SignUp } from "@clerk/clerk-react";
 import ProtectedRoute from "./components/ProtectedRule";
 import SessionTimeoutEnforcer from "./components/SetTimeOut";
 import { collection, getCountFromServer } from "firebase/firestore";
+import { BarLoader, ClipLoader } from "react-spinners";
 
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -26,6 +27,7 @@ if (!PUBLISHABLE_KEY) {
 }
 function DashboardPage() {
     const [totalServices, setTotalServices] = useState<number>(0);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchTotalServices = async () => {
@@ -33,6 +35,7 @@ function DashboardPage() {
                 const coll = collection(db, "services");
                 const snapshot = await getCountFromServer(coll);
                 setTotalServices(snapshot.data().count);
+                setIsLoading(false);
             } catch (error) {
                 console.error("Gagal mengambil total layanan:", error);
             }
@@ -41,7 +44,11 @@ function DashboardPage() {
         fetchTotalServices();
     }, []);
 
-    return (
+    return isLoading ? (
+        <div className="flex items-center -translate-y-20 justify-center h-screen">
+            <ClipLoader size={80} color="rgba(22, 163,74)" />
+        </div>
+    ) : (
         <div className="space-y-6">
             <div className="bg-white rounded-xl p-6 flex flex-col items-center justify-center shadow">
                 <img
@@ -131,7 +138,7 @@ function App() {
     }, []);
 
     if (checkingAuth) {
-        return <p className="p-4 text-center">Loading...</p>;
+        return <BarLoader color="rgba(22, 163,74)" />;
     }
 
     // useEffect(() => {

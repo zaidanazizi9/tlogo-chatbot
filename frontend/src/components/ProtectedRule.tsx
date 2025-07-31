@@ -1,6 +1,7 @@
 // src/components/ProtectedRoute.tsx
 import { useUser } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
+import { BarLoader, ClipLoader } from "react-spinners";
 
 export default function ProtectedRoute({
     children,
@@ -10,7 +11,11 @@ export default function ProtectedRoute({
     const { isSignedIn, isLoaded } = useUser();
 
     if (!isLoaded) {
-        return <div className="p-4 text-center">Loading...</div>;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <ClipLoader size={80} color="rgba(22, 163,74)" />
+            </div>
+        );
     }
 
     if (!isSignedIn) {
