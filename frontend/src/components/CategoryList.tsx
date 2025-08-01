@@ -18,12 +18,17 @@ export default function ServiceList({
 }: ServiceListProps) {
     return (
         <div className="bg-white rounded-lg shadow">
+            <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">
+                    Daftar Kategori
+                </h3>
+            </div>
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>
                         <tr className=" text-gray-500">
                             <th className="pl-6 pr-12 py-3 text-left text-sm font-medium uppercase tracking-wider w-5/6">
-                                Nama Layanan
+                                Nama Kategori
                             </th>
                             <th className="pr-10 pl-6 py-3 text-center text-sm font-medium uppercase tracking-wider">
                                 Tindakan

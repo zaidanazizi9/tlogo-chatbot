@@ -12,6 +12,8 @@ interface Service {
     termsAndConditions: string;
     procedure: string;
     time: string;
+    notes: string;
+    place: string;
     status: "active" | "inactive";
 }
 
@@ -108,6 +110,19 @@ const DetailPopup: React.FC<PopupProps> = ({ isOpen, onClose, formData }) => {
                         </div>
                     </div>
 
+                    {/* Tempat */}
+                    <div className="flex items-start space-x-3">
+                        <Clock className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
+                        <div className="flex-1">
+                            <h3 className="text-sm font-medium text-gray-700 mb-1">
+                                Tempat
+                            </h3>
+                            <p className="text-gray-900">
+                                {formData.place || "Not specified"}
+                            </p>
+                        </div>
+                    </div>
+
                     {/* Status */}
                     <div className="flex items-start space-x-3">
                         <Shield className="w-5 h-5 text-indigo-500 mt-1 flex-shrink-0" />
@@ -146,8 +161,19 @@ const DetailPopup: React.FC<PopupProps> = ({ isOpen, onClose, formData }) => {
                             <h3 className="text-sm font-medium text-gray-700 mb-4">
                                 Syarat dan Ketentuan
                             </h3>
-                            <p className="text-gray-900 whitespace-pre-wrap leading-none">
+                            <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
                                 {formData.termsAndConditions || "Not specified"}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                        <FileText className="w-5 h-5 text-red-500 mt-1 flex-shrink-0" />
+                        <div className="flex-1">
+                            <h3 className="text-sm font-medium text-gray-700 mb-4">
+                                Catatan
+                            </h3>
+                            <p className="text-gray-900 whitespace-pre-wrap leading-none">
+                                {formData.notes || "Not specified"}
                             </p>
                         </div>
                     </div>

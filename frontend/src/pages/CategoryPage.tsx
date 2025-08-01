@@ -24,6 +24,7 @@ import {
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 import CategoryList from "../components/CategoryList";
+import { ClipLoader } from "react-spinners";
 
 interface Category {
     // <<<<<<< HEAD
@@ -248,6 +249,7 @@ export default function CategoryPage() {
         useState<Category | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
     const [name, setName] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
     // Ambil data kategori
     useEffect(() => {
@@ -259,6 +261,7 @@ export default function CategoryPage() {
                     name: doc.data().name,
                 }));
                 setCategories(categoryList);
+                setIsLoading(false);
             } catch (error) {
                 console.error("Gagal mengambil data kategori:", error);
                 toast.error("Gagal mengambil data kategori.");
@@ -316,7 +319,11 @@ export default function CategoryPage() {
         setCategoriesToDelete(cat);
     };
 
-    return (
+    return isLoading ? (
+        <div className="flex items-center -translate-y-20 justify-center h-screen">
+            <ClipLoader size={80} color="rgba(22, 163,74)" />
+        </div>
+    ) : (
         <div className="space-y-6">
             {/* Header Kategori */}
             <div className="flex justify-between items-center">
@@ -324,14 +331,14 @@ export default function CategoryPage() {
                     <h2 className="text-2xl font-bold text-green-800">
                         Manajemen Kategori
                     </h2>
-                    <p className="text-gray-600">
+                    <p className="text-gray-500">
                         Kelola semua kategori yang tersedia
                     </p>
                 </div>
 
                 <button
                     onClick={() => setShowForm(true)}
-                    className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
                 >
                     <Plus className="w-4 h-4" />
                     <span>Tambah Kategori</span>
@@ -401,7 +408,7 @@ export default function CategoryPage() {
 
             {/* Modal Tambah */}
             {showForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                <div className="fixed -top-10 inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl p-6 w-80 shadow-md">
                         <h3 className="text-lg font-semibold mb-4">
                             Tambah Kategori Baru
@@ -438,5 +445,4 @@ export default function CategoryPage() {
             )}
         </div>
     );
-    // >>>>>>> origin/main
 }

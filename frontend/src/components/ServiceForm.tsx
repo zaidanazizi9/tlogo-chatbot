@@ -23,6 +23,8 @@ interface Service {
     termsAndConditions: string;
     procedure: string;
     time: string;
+    place: string;
+    notes: string;
     status: "active" | "inactive";
 }
 
@@ -50,6 +52,8 @@ export default function ServiceForm({
         procedure: "",
         category: "",
         time: "",
+        notes: "",
+        place: "",
         status: "active" as "active" | "inactive",
     });
 
@@ -64,6 +68,8 @@ export default function ServiceForm({
                 time: initialData.time, // or set to a value if available, e.g. initialData.time ?? ""
                 category: initialData.category,
                 status: initialData.status,
+                notes: initialData.notes,
+                place: initialData.place,
             });
         }
     }, [initialData]);
@@ -100,8 +106,9 @@ export default function ServiceForm({
             !formData.description ||
             !formData.category ||
             !formData.termsAndConditions ||
-            !formData.procedure
-            // || !formData.time
+            !formData.notes ||
+            !formData.procedure ||
+            !formData.time
         ) {
             toast.error("Mohon lengkapi semua field!");
             return;
@@ -141,6 +148,8 @@ export default function ServiceForm({
                 termsAndConditions: "",
                 procedure: "",
                 time: "",
+                notes: "",
+                place: "",
                 status: "active",
             });
 
@@ -217,8 +226,9 @@ export default function ServiceForm({
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold">
-                        Tambah Layanan Baru
+                        {isEditing ? "Edit Layanan" : "Tambah Layanan Baru"}
                     </h3>
+
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-gray-600"
@@ -250,7 +260,7 @@ export default function ServiceForm({
                                 name="description"
                                 value={formData.description}
                                 onChange={handleChange}
-                                rows={3}
+                                rows={5}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Masukkan deskripsi layanan"
                             />
@@ -263,7 +273,7 @@ export default function ServiceForm({
                                 name="termsAndConditions"
                                 value={formData.termsAndConditions}
                                 onChange={handleChange}
-                                rows={3}
+                                rows={5}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Masukkan syarat dan ketentuan layanan"
                             />
@@ -276,14 +286,14 @@ export default function ServiceForm({
                                 name="procedure"
                                 value={formData.procedure}
                                 onChange={handleChange}
-                                rows={3}
+                                rows={5}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Masukkan prosedur layanan"
                             />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Jadwal dan tempat layanan tersedia
+                                Jadwal layanan tersedia
                             </label>
                             <input
                                 type="text"
@@ -292,6 +302,32 @@ export default function ServiceForm({
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Masukkan jadwal layanan"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Tempat layanan tersedia
+                            </label>
+                            <input
+                                type="text"
+                                name="place"
+                                value={formData.place}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Masukkan jadwal layanan"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Catatan
+                            </label>
+                            <textarea
+                                name="notes"
+                                value={formData.notes}
+                                onChange={handleChange}
+                                rows={5}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Masukkan catatan tambahan"
                             />
                         </div>
                         <div>

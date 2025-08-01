@@ -12,16 +12,8 @@ interface Service {
     termsAndConditions: string;
     procedure: string;
     time: string;
-    status: "active" | "inactive";
-}
-
-interface ServiceFormData {
-    name: string;
-    description: string;
-    termsAndConditions: string;
-    procedure: string;
-    category: string;
-    time: string;
+    notes: string;
+    place: string;
     status: "active" | "inactive";
 }
 
@@ -52,40 +44,6 @@ export default function ServiceList({
 
             <div className="overflow-x-auto">
                 <table className="w-full">
-                    {/* <thead className="bg-gray-50">
-                        <tr>
-                            <div className="flex bg-red-500">
-                                <div className="w-3/4">
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <span>Nama layanan</span>
-                                    </th>
-                                </div>
-                                <div className="w-1/4">
-                                    <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <div className="w-5/6 m-auto flex justify-center">
-                                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
-                                                Kategori
-                                            </span>
-                                        </div>
-                                    </th>
-                                    <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <div className="w-5/6 m-auto flex justify-center">
-                                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
-                                                Status
-                                            </span>
-                                        </div>
-                                    </th>
-                                    <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <div className="w-5/6 m-auto flex justify-center">
-                                            <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
-                                                Aksi
-                                            </span>
-                                        </div>
-                                    </th>
-                                </div>
-                            </div>
-                        </tr>
-                    </thead> */}
                     <thead>
                         <tr className=" text-gray-500">
                             <th className="p-6 py-3 text-left text-sm font-medium uppercase tracking-wider w-3/4">
