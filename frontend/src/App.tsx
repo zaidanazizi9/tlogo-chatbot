@@ -12,14 +12,19 @@ import Sidebar from "./components/Sidebar";
 import ServicesPage from "./pages/ServicesPage";
 import CategoryPage from "./pages/CategoryPage";
 import { ListTodo } from "lucide-react";
-import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "./config/firestore";
-import { SignIn, SignUp } from "@clerk/clerk-react";
+// import { SignIn, SignUp } from "@clerk/clerk-react";
 import ProtectedRoute from "./components/ProtectedRule";
 import SessionTimeoutEnforcer from "./components/SetTimeOut";
 import { collection, getCountFromServer } from "firebase/firestore";
 import { BarLoader, ClipLoader } from "react-spinners";
-
+import {
+    SignIn,
+    SignUp,
+    SignedIn,
+    SignedOut,
+    RedirectToSignIn,
+} from "@clerk/clerk-react";
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -128,18 +133,18 @@ function App() {
     const [checkingAuth, setCheckingAuth] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setIsLoggedIn(!!user);
-            setCheckingAuth(false);
-        });
+    // useEffect(() => {
+    //     const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //         setIsLoggedIn(!!user);
+    //         setCheckingAuth(false);
+    //     });
 
-        return () => unsubscribe();
-    }, []);
+    //     return () => unsubscribe();
+    // }, []);
 
-    if (checkingAuth) {
-        return <BarLoader color="rgba(22, 163,74)" />;
-    }
+    // if (checkingAuth) {
+    //     return <BarLoader color="rgba(22, 163,74)" />;
+    // }
 
     // useEffect(() => {
     //     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -208,34 +213,83 @@ function App() {
         //         />
         //     </Routes>
         // </Router>
+
+        // <Router>
+        //     <Toaster position="top-right" reverseOrder={false} />
+
+        //     <Routes>
+        //         {/* Route login dan register */}
+        //         <Route
+        //             path="/login"
+        //             element={
+        //                 <SignIn
+        //                     path="/login"
+        //                     routing="path"
+        //                     signInUrl="/login"
+        //                     fallbackRedirectUrl="/"
+        //                     // oidcPrompt="select_account" // Optional untuk Google
+        //                 />
+        //             }
+        //         />
+        //         <Route
+        //             path="/register"
+        //             element={
+        //                 <SignUp
+        //                     path="/register"
+        //                     routing="path"
+        //                     // signUpUrl="/register"
+        //                     fallbackRedirectUrl="/"
+        //                 />
+        //             }
+        //         />
+
+        //         {/* Semua halaman lain hanya untuk user yang login */}
+        //         <Route
+        //             path="/*"
+        //             element={
+        //                 <>
+        //                     <SignedIn>
+        //                         <AppLayout />
+        //                     </SignedIn>
+        //                     <SignedOut>
+        //                         <RedirectToSignIn />
+        //                     </SignedOut>
+        //                 </>
+        //             }
+        //         />
+        //     </Routes>
+        // </Router>
+
         <Router>
             <Toaster position="top-right" reverseOrder={false} />
+
             <Routes>
+                {/* Route publik untuk login */}
                 <Route
-                    path="/login"
+                    path="/login/*" // semua jalur OTP juga termasuk
                     element={
                         <SignIn
                             path="/login"
                             routing="path"
                             signInUrl="/login"
-                            fallbackRedirectUrl="/dashboard" // default redirect
-                            forceRedirectUrl="/dashboard" // override redirect sepenuhnya
-                            oidcPrompt="select_account" // 💡 agar Google selalu tampilkan pilihan akun
+                            fallbackRedirectUrl="/dashboard" // atau "/"
                         />
                     }
                 />
+
+                {/* Route publik untuk register */}
                 <Route
                     path="/register"
                     element={
                         <SignUp
-                            path="/sign-up"
+                            path="/register"
                             routing="path"
-                            forceRedirectUrl="/dashboard"
                             fallbackRedirectUrl="/dashboard"
-                            oidcPrompt="select_account"
                         />
                     }
                 />
+
+                {/* Semua route lain dibungkus dengan ProtectedRoute */}
                 <Route
                     path="/*"
                     element={
