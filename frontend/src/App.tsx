@@ -1,9 +1,4 @@
-import {
-    BrowserRouter as Router,
-    Routes,
-    Route,
-    Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 
@@ -12,19 +7,12 @@ import Sidebar from "./components/Sidebar";
 import ServicesPage from "./pages/ServicesPage";
 import CategoryPage from "./pages/CategoryPage";
 import { ListTodo } from "lucide-react";
-import { auth, db } from "./config/firestore";
-// import { SignIn, SignUp } from "@clerk/clerk-react";
+import { db } from "./config/firestore";
 import ProtectedRoute from "./components/ProtectedRule";
 import SessionTimeoutEnforcer from "./components/SetTimeOut";
 import { collection, getCountFromServer } from "firebase/firestore";
-import { BarLoader, ClipLoader } from "react-spinners";
-import {
-    SignIn,
-    SignUp,
-    SignedIn,
-    SignedOut,
-    RedirectToSignIn,
-} from "@clerk/clerk-react";
+import { ClipLoader } from "react-spinners";
+import { SignIn, SignUp } from "@clerk/clerk-react";
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -130,150 +118,27 @@ function AppLayout() {
 }
 
 function App() {
-    const [checkingAuth, setCheckingAuth] = useState(true);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, (user) => {
-    //         setIsLoggedIn(!!user);
-    //         setCheckingAuth(false);
-    //     });
-
-    //     return () => unsubscribe();
-    // }, []);
-
-    // if (checkingAuth) {
-    //     return <BarLoader color="rgba(22, 163,74)" />;
-    // }
-
-    // useEffect(() => {
-    //     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-    //         if (user) {
-    //             const sessionDoc = await getDoc(
-    //                 doc(db, "userSessions", user.uid)
-    //             );
-    //             const storedSessionId = localStorage.getItem("sessionId");
-
-    //             if (
-    //                 !sessionDoc.exists() ||
-    //                 sessionDoc.data().sessionId !== storedSessionId
-    //             ) {
-    //                 toast.error(
-    //                     "Login tidak sah. Anda login di perangkat lain."
-    //                 );
-    //                 await signOut(auth);
-    //                 localStorage.removeItem("sessionId");
-    //                 return;
-    //             }
-
-    //             // sesi valid, lanjutkan
-    //             setIsLoggedIn(true);
-    //         } else {
-    //             setIsLoggedIn(false);
-    //         }
-    //         setCheckingAuth(false);
-    //     });
-
-    //     return () => unsubscribe();
-    // }, []);
-
     return (
-        // <Router>
-        //     <Toaster position="top-right" reverseOrder={false} />
-
-        //     <Routes>
-        //         {/* Jika user sudah login, redirect dari /login dan /register ke dashboard */}
-        //         <Route
-        //             path="/login"
-        //             element={
-        //                 isLoggedIn ? <Navigate to="/" replace /> : <LoginPage />
-        //             }
-        //         />
-        //         <Route
-        //             path="/register"
-        //             element={
-        //                 isLoggedIn ? (
-        //                     <Navigate to="/" replace />
-        //                 ) : (
-        //                     <RegisterPage />
-        //                 )
-        //             }
-        //         />
-
-        //         {/* Halaman utama hanya bisa diakses jika sudah login */}
-        //         <Route
-        //             path="/*"
-        //             element={
-        //                 isLoggedIn ? (
-        //                     <AppLayout />
-        //                 ) : (
-        //                     <Navigate to="/login" replace />
-        //                 )
-        //             }
-        //         />
-        //     </Routes>
-        // </Router>
-
-        // <Router>
-        //     <Toaster position="top-right" reverseOrder={false} />
-
-        //     <Routes>
-        //         {/* Route login dan register */}
-        //         <Route
-        //             path="/login"
-        //             element={
-        //                 <SignIn
-        //                     path="/login"
-        //                     routing="path"
-        //                     signInUrl="/login"
-        //                     fallbackRedirectUrl="/"
-        //                     // oidcPrompt="select_account" // Optional untuk Google
-        //                 />
-        //             }
-        //         />
-        //         <Route
-        //             path="/register"
-        //             element={
-        //                 <SignUp
-        //                     path="/register"
-        //                     routing="path"
-        //                     // signUpUrl="/register"
-        //                     fallbackRedirectUrl="/"
-        //                 />
-        //             }
-        //         />
-
-        //         {/* Semua halaman lain hanya untuk user yang login */}
-        //         <Route
-        //             path="/*"
-        //             element={
-        //                 <>
-        //                     <SignedIn>
-        //                         <AppLayout />
-        //                     </SignedIn>
-        //                     <SignedOut>
-        //                         <RedirectToSignIn />
-        //                     </SignedOut>
-        //                 </>
-        //             }
-        //         />
-        //     </Routes>
-        // </Router>
-
         <Router>
             <Toaster position="top-right" reverseOrder={false} />
-
             <Routes>
                 {/* Route publik untuk login */}
                 <Route
                     path="/login/*" // semua jalur OTP juga termasuk
                     element={
-                        <SignIn
-                            path="/login"
-                            routing="path"
-                            signInUrl="/login"
-                            fallbackRedirectUrl="/dashboard" // atau "/"
-                        />
+                        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+                            <SignIn
+                                path="/login"
+                                routing="path"
+                                signInUrl="/login"
+                                fallbackRedirectUrl="/dashboard" // atau "/"
+                                appearance={{
+                                    elements: {
+                                        card: "shadow-xl rounded-xl border border-gray-200", // tambahan custom
+                                    },
+                                }}
+                            />
+                        </div>
                     }
                 />
 
