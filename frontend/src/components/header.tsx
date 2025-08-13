@@ -1,14 +1,10 @@
-// header.tsx
-import { User, LogOut } from "lucide-react";
+import { User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import { useClerk, useUser } from "@clerk/clerk-react";
+import { ProfilePopup } from "./ProfilePopup";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
-    const { signOut } = useClerk();
-    const { user } = useUser();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -24,16 +20,6 @@ export default function Header() {
         return () =>
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-
-    const handleLogout = async () => {
-        try {
-            localStorage.removeItem("loginTime");
-            await signOut({ redirectUrl: "/login" });
-            window.location.href = "/login"; // gunakan salah satu, lebih aman reload
-        } catch (error) {
-            toast.error("Gagal logout");
-        }
-    };
 
     return (
         <header className="bg-gradient-to-r from-green-100 via-teal-50 to-blue-50 shadow-sm border-b border-gray-200 px-6 py-3">
@@ -56,27 +42,7 @@ export default function Header() {
                     </div>
 
                     {isOpen && (
-                        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                            <div className="py-1">
-                                <div className="px-4 pb-2 text-sm text-gray-500 font-medium leading-snug break-words max-w-[220px]">
-                                    <span className="block">
-                                        {
-                                            user?.primaryEmailAddress
-                                                ?.emailAddress
-                                        }
-                                    </span>
-                                </div>
-
-                                <div className="border-t border-gray-200 my-1"></div>
-                                <div className="border-t border-gray-200 my-1"></div>
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                >
-                                    <LogOut className="mr-2 h-4 w-4" /> Logout
-                                </button>
-                            </div>
-                        </div>
+                        <ProfilePopup onClose={() => setIsOpen(false)} />
                     )}
                 </div>
             </div>

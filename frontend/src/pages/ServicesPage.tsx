@@ -28,6 +28,12 @@ interface Service {
     status: "active" | "inactive";
 }
 
+const colorClasses: Record<string, { bg: string; dot: string }> = {
+    blue: { bg: "bg-blue-100", dot: "bg-blue-600" },
+    green: { bg: "bg-green-100", dot: "bg-green-600" },
+    yellow: { bg: "bg-yellow-100", dot: "bg-yellow-600" },
+};
+
 export default function ServicesPage() {
     const [services, setServices] = useState<Service[]>([]);
     const [showForm, setShowForm] = useState(false);
@@ -36,8 +42,10 @@ export default function ServicesPage() {
     );
     const [editingService, setEditingService] = useState<Service | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
-    const [categories, setCategories] = useState<string[]>([]);
+    const [selectedStatus, setSelectedStatus] = useState<string>("Semua");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+    const [categories, setCategories] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -112,29 +120,104 @@ export default function ServicesPage() {
 
                 <div className="flex items-center gap-4">
                     {/* Dropdown Kategori */}
-                    <div className="relative">
-                        <select
-                            value={selectedCategory}
-                            onChange={(e) =>
-                                setSelectedCategory(e.target.value)
-                            }
-                            onClick={() => setIsDropdownOpen((prev) => !prev)}
-                            className="appearance-none select-no-arrow w-48 border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-400"
-                        >
-                            <option value="Semua">Semua Kategori</option>
-                            {categories.map((cat) => (
-                                <option key={cat} value={cat}>
-                                    {cat}
-                                </option>
-                            ))}
-                        </select>
+                    <div className="relative w-48">
                         <div
-                            className={`pointer-events-none absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 transition-transform ${
-                                isDropdownOpen ? "rotate-180" : ""
-                            }`}
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="border border-gray-300 rounded-lg px-4 py-2 bg-white flex justify-between items-center cursor-pointer hover:border-green-500 focus:ring-2 focus:ring-green-400 text-sm"
                         >
-                            <ChevronDown size={16} />
+                            <span>
+                                {selectedCategory === "Semua"
+                                    ? "Semua Kategori"
+                                    : selectedCategory}
+                            </span>
+                            <ChevronDown
+                                size={16}
+                                className={`${
+                                    isDropdownOpen ? "rotate-180" : ""
+                                } transition-transform`}
+                            />
                         </div>
+                        {isDropdownOpen && (
+                            <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg max-h-60 overflow-y-auto text-sm">
+                                <li
+                                    onClick={() => {
+                                        setSelectedCategory("Semua");
+                                        setIsDropdownOpen(false);
+                                    }}
+                                    className="px-4 py-2 cursor-pointer hover:bg-green-100"
+                                >
+                                    Semua Kategori
+                                </li>
+                                {categories.map((cat) => (
+                                    <li
+                                        key={cat}
+                                        onClick={() => {
+                                            setSelectedCategory(cat);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                        className="px-4 py-2 cursor-pointer hover:bg-green-100"
+                                    >
+                                        {cat}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    {/* Dropdown Status */}
+                    <div className="relative w-48">
+                        <div
+                            onClick={() =>
+                                setIsStatusDropdownOpen(!isStatusDropdownOpen)
+                            }
+                            className="border border-gray-300 rounded-lg px-4 py-2 bg-white flex justify-between items-center cursor-pointer hover:border-green-500 focus:ring-2 focus:ring-green-400 text-sm"
+                        >
+                            <span>
+                                {selectedStatus === "Semua"
+                                    ? "Semua Status"
+                                    : selectedStatus === "active"
+                                    ? "Aktif"
+                                    : "Nonaktif"}
+                            </span>
+                            <ChevronDown
+                                size={16}
+                                className={`${
+                                    isStatusDropdownOpen ? "rotate-180" : ""
+                                } transition-transform`}
+                            />
+                        </div>
+
+                        {isStatusDropdownOpen && (
+                            <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg max-h-60 overflow-y-auto text-sm">
+                                <li
+                                    onClick={() => {
+                                        setSelectedStatus("Semua");
+                                        setIsStatusDropdownOpen(false);
+                                    }}
+                                    className="px-4 py-2 cursor-pointer hover:bg-green-100"
+                                >
+                                    Semua Status
+                                </li>
+                                <li
+                                    onClick={() => {
+                                        setSelectedStatus("active");
+                                        setIsStatusDropdownOpen(false);
+                                    }}
+                                    className="px-4 py-2 cursor-pointer hover:bg-green-100"
+                                >
+                                    Aktif
+                                </li>
+                                <li
+                                    onClick={() => {
+                                        setSelectedStatus("inactive");
+                                        setIsStatusDropdownOpen(false);
+                                    }}
+                                    className="px-4 py-2 cursor-pointer hover:bg-green-100"
+                                >
+                                    Nonaktif
+                                </li>
+                            </ul>
+                        )}
                     </div>
 
                     {/* Tombol Tambah */}
@@ -172,10 +255,12 @@ export default function ServicesPage() {
                         key={index}
                         className="bg-white p-6 rounded-xl shadow flex items-center justify-between"
                     >
-                        <div className={`p-3 bg-${color}-100 rounded-xl`}>
+                        <div
+                            className={`p-3 ${colorClasses[color].bg} rounded-xl`}
+                        >
                             <div
-                                className={`w-6 h-6 bg-${color}-600 rounded-full`}
-                            ></div>
+                                className={`w-6 h-6 ${colorClasses[color].dot} rounded-full`}
+                            />
                         </div>
                         <div className="text-right">
                             <p className="text-sm text-gray-600">{label}</p>
@@ -189,13 +274,17 @@ export default function ServicesPage() {
 
             {/* Daftar Layanan */}
             <ServiceList
-                services={
-                    selectedCategory === "Semua"
-                        ? services
-                        : services.filter(
-                              (s) => s.category === selectedCategory
-                          )
-                }
+                services={services
+                    .filter((s) =>
+                        selectedCategory === "Semua"
+                            ? true
+                            : s.category === selectedCategory
+                    )
+                    .filter((s) =>
+                        selectedStatus === "Semua"
+                            ? true
+                            : s.status === selectedStatus
+                    )}
                 onDeleteService={handleDeleteService}
                 onEditService={handleEditService}
             />

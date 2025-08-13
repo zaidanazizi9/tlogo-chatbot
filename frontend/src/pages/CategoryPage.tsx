@@ -119,7 +119,7 @@ export default function CategoryPage() {
             <ClipLoader size={80} color="rgba(22, 163,74)" />
         </div>
     ) : (
-        <div className="space-y-6">
+        <div className="space-y-6 ">
             {/* Header Kategori */}
             <div className="flex justify-between items-center">
                 <div>
@@ -148,18 +148,33 @@ export default function CategoryPage() {
 
             {/* Modal Hapus */}
             {categoriesToDelete && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 -top-10 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-xl shadow-md w-80">
                         <h3 className="text-lg font-semibold mb-4">
                             Konfirmasi Hapus
                         </h3>
                         {categoriesToDelete.linkedServicesCount &&
                         categoriesToDelete.linkedServicesCount > 0 ? (
-                            <p className="text-red-600">
+                            <p className="text-red-600 mt-2 text-sm">
                                 Kategori ini memiliki{" "}
-                                {categoriesToDelete.linkedServicesCount} layanan
-                                aktif. Tidak bisa dihapus sampai semua layanan
-                                dihapus atau dipindahkan ke kategori lain.
+                                <span className="font-semibold">
+                                    {categoriesToDelete.linkedServicesCount}{" "}
+                                    layanan aktif
+                                </span>
+                                .
+                                <br />
+                                <span className="block mt-1">
+                                    Tidak bisa dihapus sampai semua layanan
+                                    tersebut{" "}
+                                    <span className="font-semibold underline">
+                                        dihapus
+                                    </span>{" "}
+                                    atau{" "}
+                                    <span className="font-semibold underline">
+                                        dipindahkan
+                                    </span>{" "}
+                                    ke kategori lain.
+                                </span>
                             </p>
                         ) : (
                             <p>
