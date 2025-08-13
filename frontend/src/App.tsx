@@ -7,28 +7,12 @@ import Sidebar from "./components/Sidebar";
 import ServicesPage from "./pages/ServicesPage";
 import CategoryPage from "./pages/CategoryPage";
 import { ListTodo } from "lucide-react";
-// <<<<<<< HEAD
 import { db } from "./config/firestore";
 import ProtectedRoute from "./components/ProtectedRule";
 import SessionTimeoutEnforcer from "./components/SetTimeOut";
 import { collection, getCountFromServer } from "firebase/firestore";
 import { ClipLoader } from "react-spinners";
 import { SignIn, SignUp } from "@clerk/clerk-react";
-// =======
-// import { auth, db } from "./config/firestore";
-// // import { SignIn, SignUp } from "@clerk/clerk-react";
-// import ProtectedRoute from "./components/ProtectedRule";
-// import SessionTimeoutEnforcer from "./components/SetTimeOut";
-// import { collection, getCountFromServer } from "firebase/firestore";
-// import { BarLoader, ClipLoader } from "react-spinners";
-// import {
-//     SignIn,
-//     SignUp,
-//     SignedIn,
-//     SignedOut,
-//     RedirectToSignIn,
-// } from "@clerk/clerk-react";
-// >>>>>>> origin/main
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -134,15 +118,7 @@ function AppLayout() {
 }
 
 function App() {
-    // <<<<<<< HEAD
     return (
-        // =======
-        //     const [checkingAuth, setCheckingAuth] = useState(true);
-        //     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-        //     return (
-
-        // >>>>>>> origin/main
         <Router>
             <Toaster position="top-right" reverseOrder={false} />
 
@@ -151,7 +127,6 @@ function App() {
                 <Route
                     path="/login/*" // semua jalur OTP juga termasuk
                     element={
-                        // <<<<<<< HEAD
                         <div className="min-h-screen flex items-center justify-center bg-gray-100">
                             <SignIn
                                 path="/login"
@@ -165,14 +140,6 @@ function App() {
                                 }}
                             />
                         </div>
-                        // =======
-                        //                         <SignIn
-                        //                             path="/login"
-                        //                             routing="path"
-                        //                             signInUrl="/login"
-                        //                             fallbackRedirectUrl="/dashboard" // atau "/"
-                        //                         />
-                        // >>>>>>> origin/main
                     }
                 />
 

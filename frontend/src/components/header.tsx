@@ -1,19 +1,14 @@
 // header.tsx
-import { useNavigate } from "react-router-dom";
-import { User, LogIn, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { signOut } from "firebase/auth";
-import { auth, db } from "../config/firestore";
 import toast from "react-hot-toast";
-import { updateDoc, doc } from "firebase/firestore";
 import { useClerk, useUser } from "@clerk/clerk-react";
 
 export default function Header() {
-    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const { signOut } = useClerk();
-    const { user, isSignedIn } = useUser();
+    const { user } = useUser();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -40,36 +35,6 @@ export default function Header() {
         }
     };
 
-    // const handleLogout = async () => {
-    //     try {
-    //         await signOut(auth);
-    //         navigate("/login");
-    //         toast.success("Anda berhasil logout");
-    //     } catch (error) {
-    //         toast.error("Anda gagal logout");
-    //     }
-    // };
-
-    // const handleLogout = async () => {
-    //     try {
-    //         const uid = auth.currentUser?.uid;
-    //         if (!uid) throw new Error("User tidak ditemukan");
-
-    //         // Update Firestore → set isLoggedIn = false
-    //         await updateDoc(doc(db, "userSessions", uid), {
-    //             isLoggedIn: false,
-    //         });
-
-    //         // Sign out Firebase Auth
-    //         await signOut(auth);
-
-    //         toast.success("Berhasil logout");
-    //         navigate("/login");
-    //     } catch (err: any) {
-    //         toast.error("Gagal logout: " + err.message);
-    //     }
-    // };
-
     return (
         <header className="bg-gradient-to-r from-green-100 via-teal-50 to-blue-50 shadow-sm border-b border-gray-200 px-6 py-3">
             <div className="flex items-center justify-between">
@@ -93,16 +58,6 @@ export default function Header() {
                     {isOpen && (
                         <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                             <div className="py-1">
-                                {/* <div className="px-4 pb-2 text-sm text-gray-500 font-medium ">
-                                    {user?.primaryEmailAddress?.emailAddress}
-                                    {user?.primaryEmailAddress?.emailAddress
-                                        ?.split("@")
-                                        .map((part, idx) => (
-                                            <div key={idx}>
-                                                {idx === 0 ? part : "@" + part}
-                                            </div>
-                                        ))}
-                                </div> */}
                                 <div className="px-4 pb-2 text-sm text-gray-500 font-medium leading-snug break-words max-w-[220px]">
                                     <span className="block">
                                         {
@@ -128,40 +83,3 @@ export default function Header() {
         </header>
     );
 }
-
-// import { Link, useNavigate } from "react-router-dom";
-// import { User } from "lucide-react";
-// import LoginPage from "../pages/LoginPage";
-
-// export default function Header() {
-//   const navigate = useNavigate();
-
-//   const handleGoToLogin = () => {
-//     navigate("/login"); // pastikan route /login ada di router
-//   };
-//   return (
-//     <header className="bg-gradient-to-r from-green-100 via-teal-50 to-blue-50 shadow-sm border-b border-gray-200 px-6 py-3">
-//       <div className="flex items-center justify-between">
-//         {/* Kiri: Judul atau logo kecil */}
-//         <div className="flex items-center space-x-2">
-//           <h1 className="text-lg font-semibold text-green-800">Dashboard</h1>
-//         </div>
-//         {/* Kanan: Profil Admin */}
-//         <div className="flex items-center space-x-3">
-//           <div className="flex items-center space-x-2">
-//             <div
-//               className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center"
-//               // onClick={() => {
-//               //    onClick={handleGoToLogin}
-//               //   <LoginPage />;
-//               // }}
-//             >
-//               <User className="w-4 h-4 text-white" />
-//             </div>
-//             <span className="text-sm font-medium text-gray-700">Admin</span>
-//           </div>
-//         </div>
-//       </div>
-//     </header>
-//   );
-// }

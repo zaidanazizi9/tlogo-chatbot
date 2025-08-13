@@ -2,17 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { LogIn, LogOut, User } from "lucide-react";
-import { doc, updateDoc } from "firebase/firestore";
-import { auth } from "../config/firestore";
-import { db } from "../config/firestore";
-import { signOut } from "firebase/auth";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-// import { CustomAvatar } from "../components/ui/CustomAvatar"
 export function UserMenu() {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
 
     // Menutup menu ketika klik di luar area menu
     useEffect(() => {
@@ -34,19 +26,16 @@ export function UserMenu() {
     const handleLogin = () => {
         console.log("Login clicked!");
         setIsOpen(false); // Tutup menu setelah klik
-        // Tambahkan logika login Anda di sini
     };
 
     const handleLogout = () => {
         console.log("Logout clicked!");
         setIsOpen(false); // Tutup menu setelah klik
-        // Tambahkan logika logout Anda di sini
     };
 
     const handleProfile = () => {
         console.log("Profile clicked!");
         setIsOpen(false); // Tutup menu setelah klik
-        // Tambahkan logika navigasi ke profil di sini
     };
 
     return (
@@ -56,14 +45,7 @@ export function UserMenu() {
                 onClick={() => setIsOpen(!isOpen)}
                 aria-haspopup="true"
                 aria-expanded={isOpen}
-            >
-                {/* <CustomAvatar
-          src="/placeholder.svg?height=100&width=100"
-          alt="Admin Avatar"
-          fallback="AD"
-          className="cursor-pointer"
-        /> */}
-            </button>
+            />
 
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">

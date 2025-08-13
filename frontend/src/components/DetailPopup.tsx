@@ -1,8 +1,17 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
-import { X, Clock, Tag, FileText, List, User, Shield } from "lucide-react";
+import {
+    Clock,
+    Tag,
+    FileText,
+    List,
+    Cog,
+    ScrollText,
+    MapPin,
+    FolderCheck,
+    HeartHandshake,
+} from "lucide-react";
 
 interface Service {
     id: string;
@@ -40,12 +49,6 @@ const DetailPopup: React.FC<PopupProps> = ({ isOpen, onClose, formData }) => {
                     <h2 className="text-xl font-semibold text-gray-900">
                         Detail Layanan
                     </h2>
-                    {/* <button
-                        onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    >
-                        <X className="w-5 h-5 text-gray-500" />
-                    </button> */}
                     <div className="flex justify-end px-6">
                         <button
                             onClick={onClose}
@@ -60,72 +63,64 @@ const DetailPopup: React.FC<PopupProps> = ({ isOpen, onClose, formData }) => {
                 <div className="p-6 space-y-6">
                     {/* Name */}
                     <div className="flex items-start space-x-3">
-                        <User className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                        <Cog className="w-5 h-5 text-blue-500 flex-shrink-0" />
                         <div className="flex-1">
                             <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Nama Layanan
                             </h3>
-                            <p className="text-gray-900">
-                                {formData.name || "Not specified"}
-                            </p>
+                            <p className="text-gray-900">{formData.name}</p>
                         </div>
                     </div>
 
                     {/* Description */}
                     <div className="flex items-start space-x-3">
-                        <FileText className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                        <ScrollText className="w-5 h-5 text-green-500 flex-shrink-0" />
                         <div className="flex-1">
                             <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Deskripsi
                             </h3>
                             <p className="text-gray-900 whitespace-pre-wrap">
-                                {formData.description || "Not specified"}
+                                {formData.description}
                             </p>
                         </div>
                     </div>
 
                     {/* Category */}
                     <div className="flex items-start space-x-3">
-                        <Tag className="w-5 h-5 text-purple-500 mt-1 flex-shrink-0" />
+                        <Tag className="w-5 h-5 text-purple-500 flex-shrink-0" />
                         <div className="flex-1">
                             <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Kategori
                             </h3>
-                            <p className="text-gray-900">
-                                {formData.category || "Not specified"}
-                            </p>
+                            <p className="text-gray-900">{formData.category}</p>
                         </div>
                     </div>
 
                     {/* Time */}
                     <div className="flex items-start space-x-3">
-                        <Clock className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
+                        <Clock className="w-5 h-5 text-orange-500 flex-shrink-0" />
                         <div className="flex-1">
                             <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Waktu
                             </h3>
-                            <p className="text-gray-900">
-                                {formData.time || "Not specified"}
-                            </p>
+                            <p className="text-gray-900">{formData.time}</p>
                         </div>
                     </div>
 
                     {/* Tempat */}
                     <div className="flex items-start space-x-3">
-                        <Clock className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
+                        <MapPin className="w-5 h-5 text-orange-500 flex-shrink-0" />
                         <div className="flex-1">
                             <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Tempat
                             </h3>
-                            <p className="text-gray-900">
-                                {formData.place || "Not specified"}
-                            </p>
+                            <p className="text-gray-900">{formData.place}</p>
                         </div>
                     </div>
 
                     {/* Status */}
                     <div className="flex items-start space-x-3">
-                        <Shield className="w-5 h-5 text-indigo-500 mt-1 flex-shrink-0" />
+                        <FolderCheck className="w-5 h-5 text-indigo-500 flex-shrink-0" />
                         <div className="flex-1">
                             <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Status
@@ -143,51 +138,43 @@ const DetailPopup: React.FC<PopupProps> = ({ isOpen, onClose, formData }) => {
 
                     {/* Procedure */}
                     <div className="flex items-start space-x-3">
-                        <List className="w-5 h-5 text-teal-500 mt-1 flex-shrink-0" />
+                        <List className="w-5 h-5 text-teal-500 flex-shrink-0" />
                         <div className="flex-1">
-                            <h3 className="text-sm font-medium text-gray-700 mb-4">
+                            <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Prosedur
                             </h3>
                             <p className="text-gray-900 whitespace-pre-wrap leading-none">
-                                {formData.procedure || "Not specified"}
+                                {formData.procedure}
                             </p>
                         </div>
                     </div>
 
                     {/* Terms and Conditions */}
                     <div className="flex items-start space-x-3">
-                        <FileText className="w-5 h-5 text-red-500 mt-1 flex-shrink-0" />
+                        <HeartHandshake className="w-5 h-5 text-red-500 flex-shrink-0" />
                         <div className="flex-1">
-                            <h3 className="text-sm font-medium text-gray-700 mb-4">
+                            <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Syarat dan Ketentuan
                             </h3>
                             <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
-                                {formData.termsAndConditions || "Not specified"}
+                                {formData.termsAndConditions}
                             </p>
                         </div>
                     </div>
+
+                    {/* Notes */}
                     <div className="flex items-start space-x-3">
-                        <FileText className="w-5 h-5 text-red-500 mt-1 flex-shrink-0" />
+                        <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />
                         <div className="flex-1">
-                            <h3 className="text-sm font-medium text-gray-700 mb-4">
+                            <h3 className="text-sm font-medium text-gray-700 mb-1">
                                 Catatan
                             </h3>
                             <p className="text-gray-900 whitespace-pre-wrap leading-none">
-                                {formData.notes || "Not specified"}
+                                {formData.notes}
                             </p>
                         </div>
                     </div>
                 </div>
-
-                {/* Footer */}
-                {/* <div className="flex justify-end p-6 border-t border-gray-200">
-                    <button
-                        onClick={onClose}
-                        className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
-                    >
-                        Close
-                    </button>
-                </div> */}
             </div>
         </div>
     );

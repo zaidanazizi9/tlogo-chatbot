@@ -1,4 +1,3 @@
-// components/SignUpForm.tsx
 "use client";
 
 import type React from "react";
@@ -55,39 +54,6 @@ export const RegisterForm: React.FC<SignUpFormProps> = ({ onSignUp }) => {
             setIsLoading(false);
         }
     };
-
-    // const handleRegister = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     setIsLoading(true);
-
-    //     try {
-    //         const userCredential = await createUserWithEmailAndPassword(
-    //             auth,
-    //             email,
-    //             password
-    //         );
-    //         const user = userCredential.user;
-
-    //         // ✅ Simpan data user ke Firestore
-    //         await setDoc(doc(db, "users", user.uid), {
-    //             email: user.email,
-    //             createdAt: serverTimestamp(),
-    //         });
-    //         console.log("Pendaftaran berhasil:", user.email);
-
-    //         if (onSignUp) {
-    //             onSignUp(user.email || "");
-    //         }
-    //         await signOut(auth); // keluar dari login otomatis
-    //         localStorage.removeItem("sessionId"); // hapus session lokal
-    //         toast.success("Pendaftaran berhasil! Silakan login.");
-    //         navigate("/login");
-    //     } catch (error: any) {
-    //         toast.error("Gagal mendaftar: " + error.message);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 
     return (
         <Card className="w-full max-w-md mx-auto">

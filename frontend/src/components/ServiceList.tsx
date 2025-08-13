@@ -1,6 +1,5 @@
 "use client";
 
-import { Edit, Trash2, Eye } from "lucide-react";
 import { useState } from "react";
 import DetailPopup from "./DetailPopup";
 
@@ -29,7 +28,6 @@ export default function ServiceList({
     onDeleteService,
     onEditService,
 }: ServiceListProps) {
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedService, setSelectedService] = useState<Service | null>(
         null
     );
@@ -77,7 +75,6 @@ export default function ServiceList({
                                     key={service.id}
                                     className="hover:bg-gray-50"
                                 >
-                                    {/* <td className="px-2 py-4 whitespace-nowrap"> */}
                                     <td className="pl-6 pr-12 py-4 break-words max-w-xs cursor-pointer">
                                         <div
                                             onClick={() =>
@@ -92,7 +89,6 @@ export default function ServiceList({
                                             </div>
                                         </div>
                                     </td>
-                                    {/* <td className="px-2 py-4 whitespace-nowrap"> */}
                                     <td className="px-2 py-4 break-words max-w-xs ">
                                         <div className="w-5/6 m-auto flex justify-center">
                                             <span className="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">
@@ -100,8 +96,6 @@ export default function ServiceList({
                                             </span>
                                         </div>
                                     </td>
-                                    {/* <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-900">{formatPrice(service.price)}</td> */}
-                                    {/* <td className="px-2 py-4 whitespace-nowrap"> */}
                                     <td className="px-2 py-4 break-words max-w-xs">
                                         <div className="w-5/6 m-auto flex justify-center">
                                             <span
@@ -119,14 +113,6 @@ export default function ServiceList({
                                     </td>
                                     <td className="pr-10 pl-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div className="w-5/6 m-auto flex justify-center space-x-2">
-                                            {/* <button
-                                                onClick={() =>
-                                                    onEditService(service)
-                                                }
-                                                className="text-yellow-600 hover:text-yellow-900"
-                                            >
-                                                <Edit className="w-4 h-4" />
-                                            </button> */}
                                             <button
                                                 onClick={() =>
                                                     onEditService(service)
@@ -144,15 +130,6 @@ export default function ServiceList({
                                             >
                                                 Hapus
                                             </button>
-
-                                            {/* <button
-                                                onClick={() =>
-                                                    onDeleteService(service)
-                                                }
-                                                className="text-red-600 hover:text-red-900"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button> */}
                                         </div>
                                     </td>
                                 </tr>

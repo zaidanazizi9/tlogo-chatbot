@@ -65,7 +65,7 @@ export default function ServiceForm({
                 description: initialData.description,
                 termsAndConditions: initialData.termsAndConditions,
                 procedure: initialData.procedure,
-                time: initialData.time, // or set to a value if available, e.g. initialData.time ?? ""
+                time: initialData.time,
                 category: initialData.category,
                 status: initialData.status,
                 notes: initialData.notes,
@@ -134,12 +134,6 @@ export default function ServiceForm({
             }
 
             onAddService(formData);
-            // const docRef = await addDoc(collection(db, "services"), formData);
-
-            // onAddService({
-            //     ...formData,
-            //     id: docRef.id,
-            // });
 
             setFormData({
                 name: "",
@@ -225,9 +219,15 @@ export default function ServiceForm({
         <div className="fixed -top-10 inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">
-                        {isEditing ? "Edit Layanan" : "Tambah Layanan Baru"}
-                    </h3>
+                    <div>
+                        <h3 className="text-lg font-semibold">
+                            {isEditing ? "Edit Layanan" : "Tambah Layanan Baru"}
+                        </h3>
+                        <p className="text-xs text-red-600 mt-1">
+                            Isi dengan tanda "-" apabila kolom tidak ingin
+                            diisi.
+                        </p>
+                    </div>
 
                     <button
                         onClick={onClose}
@@ -428,63 +428,3 @@ export default function ServiceForm({
         </div>
     );
 }
-
-// const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-
-//     // Validasi form
-//     if (!formData.name || !formData.description || !formData.category) {
-//         toast.error("Mohon lengkapi semua field!");
-//         return;
-//     }
-//     try {
-//         const q = query(
-//             collection(db, "services"),
-//             where("name", "==", formData.name)
-//         );
-//         const snapshot = await getDocs(q);
-
-//         if (!snapshot.empty) {
-//             toast.error("Layanan tersebut sudah ada!");
-//             return;
-//         }
-
-//         const docRef = await addDoc(collection(db, "services"), {
-//             name: formData.name,
-//             description: formData.description,
-//             category: formData.category,
-//             termsAndConditions: formData.termsAndConditions,
-//             procedure: formData.procedure,
-//             status: formData.status,
-//         });
-
-//         onAddService({
-//             id: docRef.id,
-//             name: formData.name,
-//             description: formData.description,
-//             category: formData.category,
-//             termsAndConditions: formData.termsAndConditions,
-//             procedure: formData.procedure,
-//             status: formData.status,
-//         });
-
-//         setFormData({
-//             name: "",
-//             description: "",
-//             category: "",
-//             termsAndConditions: "",
-//             procedure: "",
-//             status: "active",
-//         });
-
-//         toast.success("Layanan berhasil ditambahkan!");
-//         onClose();
-//     } catch (error) {
-//         console.error("Gagal menambahkan dokumen:", error);
-//         alert("Gagal menambahkan data ke Firebase.");
-//     }
-// <<<<<<< HEAD
-// // };
-// =======
-// // };
-// >>>>>>> origin/main
