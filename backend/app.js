@@ -4,9 +4,8 @@ const fetch = require("node-fetch");
 const app = express();
 const fs = require("fs");
 const path = require("path");
-const admin = require("firebase-admin");
-// const { callGeminiAPI } = require("./gemini");
-const { callGeminiAPI } = require("../gemini");
+// const admin = require("firebase-admin");
+const { callGeminiAPI } = require("./gemini");
 
 app.use(express.json());
 app.use(express.static("public")); // untuk menyajikan file statis dari folder public
@@ -17,7 +16,8 @@ const PORT = process.env.PORT || 3000;
 const sessions = {}; //melacak sesi user
 const userState = new Map(); // userState: { phoneNumber -> selectedCategory }
 
-const db = admin.firestore();
+// const db = admin.firestore();
+const { db } = require("./firebase");
 const layananRef = db.collection("services");
 
 //Fungsi untuk mengirim pesan bingung
