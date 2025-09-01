@@ -361,8 +361,8 @@ const sendTextMessage = async (number, message) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                api_key: "nMLUrJsihSYRO93y2LC2DammLFvph8",
-                sender: "6285191330330",
+                api_key: process.env.WAGW_API_KEY,
+                sender: process.env.WA_NUMBER,
                 number: number,
                 message: message,
             }),
